@@ -209,10 +209,17 @@ export default function FlappyPencil() {
     gs.raf = requestAnimationFrame(() => loopRef.current?.());
   }, []);
 
-  const tap = useCallback(() => {
+  const flap = useCallback(() => {
     const gs = gsRef.current;
-    if (gs.phase === "idle" || gs.phase === "dead") startGame();
-    else if (gs.phase === "playing") gs.vy = JUMP;
+    if (gs.phase === "idle" || gs.phase === "dead") {
+      startGame();
+      return;
+    }
+
+    if (gs.phase === "playing") {
+      gs.vy = JUMP;
+      draw();
+    }
   }, [startGame]);
 
   useEffect(() => {
@@ -231,11 +238,11 @@ export default function FlappyPencil() {
 
   useEffect(() => {
     const fn = e => {
-      if (e.code === "Space" || e.key === "ArrowUp") { e.preventDefault(); tap(); }
+      if (e.code === "Space" || e.key === "ArrowUp") { e.preventDefault(); flap(); }
     };
     window.addEventListener("keydown", fn);
     return () => window.removeEventListener("keydown", fn);
-  }, [tap]);
+  }, [flap]);
 
   const submitScore = async () => {
     const n = inputName.trim();
@@ -259,7 +266,16 @@ export default function FlappyPencil() {
       <p style={{ color: "#7986cb", margin: "0 0 14px", fontSize: "12px" }}>Highest score gets incentives ah!</p>
 
       <div style={{ position: "relative", borderRadius: "16px", overflow: "hidden", boxShadow: "0 10px 40px rgba(0,0,0,0.15)" }}>
-        <canvas ref={canvasRef} width={W} height={H} onClick={tap} style={{ display: "block", cursor: "pointer" }} />
+        <canvas
+          ref={canvasRef}
+          width={W}
+          height={H}
+          onPointerDown={e => {
+            e.preventDefault();
+            flap();
+          }}
+          style={{ display: "block", cursor: "pointer", touchAction: "none" }}
+        />
 
         {showInput && (
           <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10, background: "rgba(0,0,0,0.08)" }}>
