@@ -280,7 +280,10 @@ export default function FlappyPencil() {
               <div style={{ color: "#888", fontSize: "13px", lineHeight: 1.35, marginBottom: "14px" }}>Beat your classmates on the leaderboard!</div>
               <div style={{ color: "#b39ddb", fontSize: "12px", fontWeight: "bold", marginBottom: "14px" }}>↑ or Space also works</div>
               <button
-                onClick={startGame}
+                onPointerDown={e => {
+                  e.preventDefault();
+                  startGame();
+                }}
                 style={{
                   pointerEvents: "auto",
                   padding: "12px 22px",
@@ -316,7 +319,7 @@ export default function FlappyPencil() {
               <button onClick={submitScore} style={{ width: "100%", padding: "10px", background: "#3f51b5", color: "white", border: "none", borderRadius: "10px", fontWeight: "bold", cursor: "pointer", fontSize: "14px", marginBottom: "7px" }}>
                 Save Score
               </button>
-              <button onClick={retryGame} style={{ width: "100%", padding: "10px", background: "#e8eaf6", color: "#1a237e", border: "none", borderRadius: "10px", fontWeight: "bold", cursor: "pointer", fontSize: "14px", marginBottom: "7px" }}>
+              <button onPointerDown={e => { e.preventDefault(); retryGame(); }} style={{ width: "100%", padding: "10px", background: "#e8eaf6", color: "#1a237e", border: "none", borderRadius: "10px", fontWeight: "bold", cursor: "pointer", fontSize: "14px", marginBottom: "7px" }}>
                 Retry
               </button>
               <button onClick={() => setShowInput(false)} style={{ background: "none", border: "none", color: "#bbb", cursor: "pointer", fontSize: "12px" }}>
