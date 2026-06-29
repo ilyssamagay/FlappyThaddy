@@ -134,17 +134,6 @@ export default function FlappyPencil() {
     }
 
     if (gs.phase === "idle") {
-      ctx.fillStyle = "rgba(255,255,255,0.92)";
-      rrect(ctx, W / 2 - 145, H / 2 - 100, 290, 172, 18); ctx.fill();
-      ctx.fillStyle = "#1a237e"; ctx.font = "bold 28px Arial"; ctx.textAlign = "center";
-      ctx.fillText("T.Dy's Classroom", W / 2, H / 2 - 57);
-      ctx.fillStyle = "#555"; ctx.font = "15px Arial";
-      ctx.fillText("Tap • Click • Spacebar to fly!", W / 2, H / 2 - 22);
-      ctx.fillStyle = "#888"; ctx.font = "13px Arial";
-      ctx.fillText("Dodge the colorful book stacks 📚", W / 2, H / 2 + 8);
-      ctx.fillText("Beat your classmates on the leaderboard!", W / 2, H / 2 + 32);
-      ctx.fillStyle = "#b39ddb"; ctx.font = "bold 12px Arial";
-      ctx.fillText("↑ or Space also works", W / 2, H / 2 + 58);
     }
 
     if (gs.phase === "dead") {
@@ -260,6 +249,11 @@ export default function FlappyPencil() {
     await appStorage.remove("flappy-pencil-lb");
   };
 
+  const retryGame = useCallback(() => {
+    setInputName("");
+    startGame();
+  }, [startGame]);
+
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", background: "#f0f4ff", padding: "20px 12px", fontFamily: "Arial, sans-serif" }}>
       <h1 style={{ color: "#1a237e", margin: "0 0 2px", fontSize: "22px", letterSpacing: "-0.5px" }}>Flappy T.Dy</h1>
@@ -277,6 +271,35 @@ export default function FlappyPencil() {
           style={{ display: "block", cursor: "pointer", touchAction: "none" }}
         />
 
+        {phase === "idle" && !showInput && (
+          <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", zIndex: 10, width: "290px", pointerEvents: "none" }}>
+            <div style={{ background: "rgba(255,255,255,0.92)", borderRadius: "18px", padding: "24px 20px 18px", textAlign: "center", boxShadow: "0 12px 40px rgba(0,0,0,0.18)" }}>
+              <div style={{ color: "#1a237e", fontSize: "28px", fontWeight: "bold", letterSpacing: "-0.5px", marginBottom: "8px" }}>T.Dy's Classroom</div>
+              <div style={{ color: "#555", fontSize: "15px", marginBottom: "6px" }}>Tap • Click • Spacebar to fly!</div>
+              <div style={{ color: "#888", fontSize: "13px", lineHeight: 1.35, marginBottom: "6px" }}>Dodge the colorful book stacks 📚</div>
+              <div style={{ color: "#888", fontSize: "13px", lineHeight: 1.35, marginBottom: "14px" }}>Beat your classmates on the leaderboard!</div>
+              <div style={{ color: "#b39ddb", fontSize: "12px", fontWeight: "bold", marginBottom: "14px" }}>↑ or Space also works</div>
+              <button
+                onClick={startGame}
+                style={{
+                  pointerEvents: "auto",
+                  padding: "12px 22px",
+                  border: "none",
+                  borderRadius: "999px",
+                  background: "#3f51b5",
+                  color: "white",
+                  fontSize: "15px",
+                  fontWeight: "bold",
+                  boxShadow: "0 12px 30px rgba(63,81,181,0.35)",
+                  cursor: "pointer"
+                }}
+              >
+                Play
+              </button>
+            </div>
+          </div>
+        )}
+
         {showInput && (
           <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10, background: "rgba(0,0,0,0.08)" }}>
             <div style={{ background: "white", borderRadius: "18px", padding: "24px 20px", textAlign: "center", width: "220px", boxShadow: "0 12px 40px rgba(0,0,0,0.25)" }}>
@@ -293,6 +316,9 @@ export default function FlappyPencil() {
               <button onClick={submitScore} style={{ width: "100%", padding: "10px", background: "#3f51b5", color: "white", border: "none", borderRadius: "10px", fontWeight: "bold", cursor: "pointer", fontSize: "14px", marginBottom: "7px" }}>
                 Save Score
               </button>
+              <button onClick={retryGame} style={{ width: "100%", padding: "10px", background: "#e8eaf6", color: "#1a237e", border: "none", borderRadius: "10px", fontWeight: "bold", cursor: "pointer", fontSize: "14px", marginBottom: "7px" }}>
+                Retry
+              </button>
               <button onClick={() => setShowInput(false)} style={{ background: "none", border: "none", color: "#bbb", cursor: "pointer", fontSize: "12px" }}>
                 Skip
               </button>
@@ -304,7 +330,7 @@ export default function FlappyPencil() {
       <div style={{ marginTop: "20px", background: "white", borderRadius: "14px", padding: "18px 16px", width: "100%", maxWidth: "400px", boxShadow: "0 4px 20px rgba(0,0,0,0.07)" }}>
         <h2 style={{ margin: "0 0 14px", color: "#1a237e", fontSize: "16px", textAlign: "center" }}>🏆 Class Leaderboard</h2>
         {board.length === 0
-          ? <p style={{ textAlign: "center", color: "#ccc", fontSize: "13px", margin: 0 }}>No scores yet — be the first to play! 🎮</p>
+          ? <p style={{ textAlign: "center", color: "#ccc", fontSize: "13px", margin: 0 }}>No scores yet!</p>
           : board.map((e, i) => (
             <div key={i} style={{
               display: "flex", alignItems: "center", padding: "9px 12px", marginBottom: "5px",
